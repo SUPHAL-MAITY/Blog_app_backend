@@ -1,8 +1,8 @@
 import { Router } from "express";
 
-import { blogsByCategoriesController, changeBlogStatusController, createBlogcontroller, deleteBlogController, getAllBlogsController, getAllBlogsForUserController, getBlogsByPageController, getOwnBlogsController, getPopularBLogsController, getRecentBlogsController, getSingleBlogController, searchItemController, updateBlogController } from "../controllers/blog.controller.js";
+import { blogsByCategoriesController, changeBlogStatusController, createBlogcontroller, deleteBlogController, getAllBlogsController, getAllBlogsForUserController, getBlogsByPageController, getOwnBlogsController, getPopularBLogsController, getRecentBlogsController, getSearchFromOwnBlogsController, getSingleBlogController, searchItemController, updateBlogController } from "../controllers/blog.controller.js";
 import { decodeToken,isAdmin } from "../middlewares/auth.middleware.js";
-import { get } from "mongoose";
+
 
 
 
@@ -27,6 +27,7 @@ router.route("/all-user-blogs").get(getAllBlogsForUserController)
 router.route("/category/:category").get(blogsByCategoriesController)
 router.route("/search").get(searchItemController)
 router.route("/popular").get(getPopularBLogsController)
+router.route("/get-own-search-blogs").get(decodeToken ,getSearchFromOwnBlogsController)
 
 
 

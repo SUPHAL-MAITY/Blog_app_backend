@@ -31,14 +31,6 @@ app.use(express.static("public"))
 
 
 
-
-
-
-
-
-
-
-
 ///// router middlewares 
 
 import testRouter from "./routes/test.routes.js"
@@ -51,9 +43,6 @@ app.use("/api/v1",testRouter)
 app.use("/api/v1",authRouter)
 app.use("/api/v1/user",blogRouter)
 app.use("/api/v1/admin",userRouter)
-
-
-
 
 
 

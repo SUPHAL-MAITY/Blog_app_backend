@@ -153,20 +153,59 @@ const getSingleBlogController=asyncHandler(async(req,res)=>{
 
 
 
-const getOwnBlogsController=asyncHandler(async(req,res)=>{
+
+
+
+    const getOwnBlogsController=asyncHandler(async(req,res)=>{
+        const page=parseInt(req.query.page) ||1;   
+        const limit=5;
+        const skip=(page-1)*limit;
+
+
+        const id=req.user;
     
-    const id=req.user;
+        const blogs=await Blogs.find({author:id}).populate("author","name").skip(skip).limit(limit).sort({createdAt:-1})
+    
+        if(!blogs){
+            throw new ApiError(400,"blogs not found")
+        }
 
-    const ownBlogs=await Blogs.find({author:id}).populate("author","name").exec()
+        const totalBlogs=await Blogs.countDocuments({author:id});
+        if(!totalBlogs){
+            throw new ApiError(400,"total blogs not found")
+        }
 
-    if(!ownBlogs){
-        throw new ApiError(400,"blogs not found")
-    }
+        const totalPages=Math.ceil(totalBlogs/limit);
+        if(!totalPages){
+            throw new ApiError(400,"total pages not found")
+        }
+    
+        
+    
+        return res.status(200).json(new ApiResponse(200,{blogs,recentPage:page,totalPages, length:blogs.length},"own blogs fetched successffully"))
+    
+    
+    })
+    
 
-    return res.status(200).json(new ApiResponse(200,{ownBlogs,length:ownBlogs.length},"own blogs fetched successffully"))
 
 
-})
+
+
+// const getOwnBlogsController=asyncHandler(async(req,res)=>{
+    
+//     const id=req.user;
+
+//     const ownBlogs=await Blogs.find({author:id}).populate("author","name").exec()
+
+//     if(!ownBlogs){
+//         throw new ApiError(400,"blogs not found")
+//     }
+
+//     return res.status(200).json(new ApiResponse(200,{ownBlogs,length:ownBlogs.length},"own blogs fetched successffully"))
+
+
+// })
 
 
 const getBlogsByPageController=asyncHandler(async(req,res)=>{
@@ -221,6 +260,7 @@ const changeBlogStatusController=asyncHandler(async(req,res)=>{
    
     return res.status(200).json(new ApiResponse(200,{},"Blog status Updated Sucessfully"))
 })
+
 
 
 const blogsByCategoriesController=asyncHandler(async(req,res)=>{
@@ -298,6 +338,7 @@ const getPopularBLogsController=asyncHandler(async(req,res)=>{
 ///// write this in the weekend
 
 const getSearchFromOwnBlogsController=asyncHandler(async(req,res)=>{
+
     const item=req.query.q;
     console.log(item)
     if(!item){
@@ -324,4 +365,4 @@ const getSearchFromOwnBlogsController=asyncHandler(async(req,res)=>{
 })
 
 
-export {getPopularBLogsController, searchItemController,blogsByCategoriesController,getAllBlogsForUserController,createBlogcontroller,deleteBlogController,updateBlogController,getAllBlogsController,getBlogsByPageController,getRecentBlogsController,getSingleBlogController,getOwnBlogsController,changeBlogStatusController};
+export {getSearchFromOwnBlogsController, getPopularBLogsController, searchItemController,blogsByCategoriesController,getAllBlogsForUserController,createBlogcontroller,deleteBlogController,updateBlogController,getAllBlogsController,getBlogsByPageController,getRecentBlogsController,getSingleBlogController,getOwnBlogsController,changeBlogStatusController};
